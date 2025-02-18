@@ -1,0 +1,26 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "crud application"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnshitaHub/my-crud-app.git"
+  },
+  "author": "Code with Anshita",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnshitaHub/my-crud-app/issues"
+  },
+  "homepage": "https://github.com/AnshitaHub/my-crud-app#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.10.0",
+    "nodemon": "^3.1.9"
+  }
+}

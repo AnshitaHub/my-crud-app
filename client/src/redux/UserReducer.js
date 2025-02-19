@@ -1,64 +1,79 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { UserList } from "../Data";
-import fetchUser from "./userActions";
+import { fetchUsers, fetchUserById, createUser, updateUser, deleteUser } from "./userActions";
 
-
-const UserSlice = createSlice({
-    name: 'users',
-    initialState:{
-        users: UserList,
-        status: 'idle',
-
-    },
-    // reducer  logic
-    reducers: {
-        // add
-        addUser: (state, action) => {
-            state.users.push(action.payload);
-            console.log(action);
-        },
-
-
-        // delete
-        deleteUser: (state, action) => {
-            console.log('state', state);
-            const { id } = action.payload;            
-            // return state.users.filter((users) => {
-            //     users.id !== id});
-        state.users =  state.users.filter((users) => users.id !== id);
-        },
-
-        // update
-        updateUser: (state, action) => {
-            const { id, name, email, TaskStatus ,  date, description} = action.payload;
-            const newUser = state.users.find((users) => users.id === id);
-            if (newUser) {
-                newUser.name = name;
-                newUser.email = email;
-                newUser.TaskStatus= TaskStatus;
-                newUser.date = date,
-                newUser.description = description;
-            }
+const userSlice = createSlice({
+  name: 'users',
+  initialState: {
+    users: [],
+    loading: false,
+    error: null
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload;
+        console.log('merged data',action.payload)
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchUserById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload;
+      })
+      .addCase(fetchUserById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(createUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createUser.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log("action-->>",action)
+        state.users.push(action.payload);
+      })
+      .addCase(createUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.users.findIndex(user => user.id === action.payload.id);
+        console.log('action', action)
+        if (index !== -1) {
+          state.users[index] = action.payload;
+        state.users[index] = { ...state.users[index], ...action.payload };
         }
-    },
-    extraReducers: (builder)=>{
-        builder
-        .addCase(fetchUser.pending, (state) => {
-            state.status = 'loading';
-          })
-          .addCase(fetchUser.fulfilled, (state, action) => {
-            state.isLoading = 'succeed';
-            state.users.users = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = state.users.filter(user => user.id !== action.payload);
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+  }
+});
 
-          })
-          .addCase(fetchUser.rejected, (state, action) => {
-            state.status = 'failed';
-            console.log(action.payload);
-          });
-    }
-
-})
-
-export const { deleteUser, addUser, updateUser } = UserSlice.actions;
-
-export default UserSlice.reducer;
+export default userSlice.reducer;

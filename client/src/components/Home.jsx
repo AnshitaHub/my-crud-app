@@ -1,33 +1,27 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteUser } from "../redux/UserReducer";
-import fetchUser from "../redux/userActions";
-import { useEffect } from "react";
+import { deleteUser, fetchUsers } from "../redux/userActions";
+import { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Home.css';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
-
   const users = useSelector((state) => state.users) || [];
   console.log('users', users.users);
-
+// const [data,setData] = useState({users:[]})
   const dispatch = useDispatch();
-  const userStatus = useSelector((state) => state.users.status);
 
   useEffect(() => {
-    if (userStatus === 'idle') {
-      dispatch(fetchUser());
-    }
-  }, [userStatus, dispatch]);
+    !users.users?.length && dispatch(fetchUsers());
+  }, []);
 
   const handleDelete = (id) => {
-    dispatch(deleteUser({ id }));
+    dispatch(deleteUser(id));
     console.log(id);
   }
-  console.log(">>>>>>>>>", typeof (users.users));
-
+console.log("users>>>>>>",users)
   return (
     <div className="container-fluid d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <div className="card w-100 mx-3 my-5" style={{ maxWidth: '800px', backgroundColor: '#fdebff' }}>
@@ -44,21 +38,21 @@ const Home = () => {
                 <thead className="table-dark">
                   <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
+                    <th>Title</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.users.map((user, index) => {
+                 
                     return (
                       <tr key={index}>
                         <td>{user.id}</td>
-                        <td>{user.name}</td>
-                        <td>{user.email}</td>
-                        <td >{user.TaskStatus}    </td>
-                    
+                        <td>{user.title}</td>
+                        <td style={{ color: user.completed ? 'green' : 'red' }}>
+                          {user.completed ? 'Completed' : 'Pending'}
+                        </td>
                         <td>
                           <Link to={`/edit/${user.id}`}>
                             <button className="btn btn-sm mt-2">

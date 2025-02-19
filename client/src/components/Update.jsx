@@ -1,8 +1,8 @@
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { updateUser } from "../redux/UserReducer";
+import { updateUser } from "../redux/userActions"; 
 import { Formik, Form, Field } from 'formik';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 import { useParams, useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
 const Update = () => {
@@ -14,28 +14,34 @@ const Update = () => {
   const existingUser = users.users.find((user) => user.id === parseInt(id));
 
 
-    const validationSchema = Yup.object({
-      name: Yup.string().min(3, 'Name is too Short').max(70, 'Name is too Long').required('Name is required'),
-      // regex format is applied here in email
-      email: Yup.string().required('Email is required').matches(
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        "Please enter a valid email"
-      ),
-      date: Yup.date().required('Date is required'),
-      description: Yup.string().required('Description is required'),
-      TaskStatus: Yup.string().required('Status is required'),
-    });
+    // const validationSchema = Yup.object({
+    //   // name: Yup.string().min(3, 'Name is too Short').max(70, 'Name is too Long').required('Name is required'),
+    //   // // regex format is applied here in email
+    //   // email: Yup.string().required('Email is required').matches(
+    //   //   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    //   //   "Please enter a valid email"
+    //   // ),
+    //   // date: Yup.date().required('Date is required'),
+    //   // description: Yup.string().required('Description is required'),
+    //   // TaskStatus: Yup.string().required('Status is required'),
+      
+    // });
+     const validationSchema = Yup.object({
+    title: Yup.string().required('Description is required'),
+   completed: Yup.string().required('Status is required'),
+  });
+
   
   const initialValues = {
-    name: existingUser.name,
-    email:  existingUser.email,
-    date: existingUser.date,
-    TaskStatus: existingUser.TaskStatus,
-    description: existingUser.description
+    // name: existingUser.id,
+    // email:  existingUser.email,
+    // date: existingUser.date,
+    completed: existingUser.completed,
+    title: existingUser.title
   };
 
   const handleSubmit = (values) => {
-    dispatch(updateUser({ id: parseInt(id), ...values }));
+    dispatch(updateUser({ userId: parseInt(id), ...values }));
     navigate('/');
   };
 
@@ -49,10 +55,10 @@ const Update = () => {
             validationSchema= {validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ handleChange, values, errors, touched, setFieldValue }) => {
+            {({ handleChange, values, errors, touched }) => {
               return (
                 <Form>
-                  <div className="mb-3">
+                  {/* <div className="mb-3">
                     <label htmlFor="name" className="form-label">
                       Name
                     </label>
@@ -100,10 +106,10 @@ const Update = () => {
                       required
                     />
                     {errors.date && touched.date ? <div className="text-danger">{errors.date}</div> : null}
-                  </div>
+                  </div> */}
 
                   <div className="mb-3">
-                    <label htmlFor="description" className="form-label">
+                    <label htmlFor="title" className="form-label">
                       Description
                     </label>
                     <Field
@@ -111,12 +117,12 @@ const Update = () => {
                       className="form-control"
                       placeholder="Describe the task.."
                       rows="4"
-                      name="description"
+                      name="title"
                       onChange={handleChange}
-                      value={values.description}
+                      value={values.title}
                       required
                     ></Field>
-                    {errors.description && touched.description ? <div className="text-danger">{errors.description}</div> : null}
+                    {errors.title && touched.title ? <div className="text-danger">{errors.title}</div> : null}
                   </div>
 
                   <div className="mb-3">
@@ -126,16 +132,16 @@ const Update = () => {
                     <Field
                       as="select"
                       className="form-control"
-                      name="TaskStatus"
+                      name="completed"
                       onChange={handleChange}
-                      value={values.TaskStatus}
+                      value={values.completed}
                       required
                     >
                       <option value="">Choose...</option>
-                      <option value="Completed" style={{ color: 'green' }}>Completed</option>
-                      <option value="Pending" style={{ color: 'red' }}>Pending</option>
+                      <option value= {true} style={{ color: 'green' }}>Completed</option>
+                      <option value={false} style={{ color: 'red' }}>Pending</option>
                     </Field>
-                    {errors.TaskStatus && touched.TaskStatus ? <div className="text-danger">{errors.TaskStatus}</div> : null}
+                    {errors.completed && touched.completed? <div className="text-danger">{errors.completed}</div> : null}
                   </div>
 
                   <button
